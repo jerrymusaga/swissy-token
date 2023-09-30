@@ -1,22 +1,17 @@
-import { ethers } from "hardhat";
+import * as dotenv from "dotenv";
+import * as hre from "hardhat";
+dotenv.config();
+
+const initialSupply = 1000;
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
+  // here we deploy the contract
+  const SwissyTokenContract = await hre.ethers.deployContract("Swissy", [
+    initialSupply,
+  ]);
 
-  const lockedAmount = ethers.parseEther("0.001");
-
-  const lock = await ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  await lock.waitForDeployment();
-
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
-  );
+  await SwissyTokenContract.waitForDeployment();
+  console.log(`Swissy Contract Address is ${SwissyTokenContract.target}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
